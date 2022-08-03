@@ -1,15 +1,8 @@
 from flask import Flask
 
-from markupsafe import escape
-
 from flask import request
 
 app = Flask(__name__)
-
-
-@app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello, world!'
 
 
 @app.get('/currency/<currency_UPS>')
@@ -17,6 +10,7 @@ def currency_list():
     pass
 
 
+@app.get('/currencies')
 @app.get('/currency/<currency_UPS>')
 def currency_rating():
     pass
@@ -42,11 +36,6 @@ def amount_of_currency_available():
     pass
 
 
-@app.get('/currencies')
-def currencies_rating():
-    pass
-
-
 @app.get('/user')
 def user_balance():
     pass
@@ -59,6 +48,11 @@ def transfer():
 
 @app.get('/user/history')
 def user_history():
+    pass
+
+
+@app.get('/currency/<currency_UPS>/review', methods=['POST', 'GET', 'POST', 'DELETE'])
+def currency_review():
     pass
 
 
