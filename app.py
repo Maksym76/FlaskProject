@@ -27,12 +27,12 @@ def course_history(currency_UPS1, currency_UPS2):
     pass
 
 
-@app.get('/currency/trade/main:<currency_UPS1>/second:<currency_UPS2>')
+@app.get('/currency/trade/<currency_UPS1>/<currency_UPS2>')
 def course_ups1_to_ups2(currency_UPS1, currency_UPS2):
     pass
 
 
-@app.post('/currency/trade/main:<currency_UPS1>/second:<currency_UPS2>')
+@app.post('/currency/trade/<currency_UPS1>/<currency_UPS2>')
 def exchange(currency_UPS1, currency_UPS2):
     pass
 
