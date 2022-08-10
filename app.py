@@ -16,7 +16,7 @@ def currency_rating():
     pass
 
 
-@app.get('/currency/trade/main:<currency_UPS1>/second:<currency_UPS2>')
+@app.get('/currency/trade/<currency_UPS1>/<currency_UPS2>')
 def course_history(currency_UPS1, currency_UPS2):
     pass
 
