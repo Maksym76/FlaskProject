@@ -1,22 +1,16 @@
-from flask import Flask
+from flask import Flask, request
 
 from markupsafe import escape
-
-from flask import request
 
 import sqlite3
 
 app = Flask(__name__)
 
 def get_data(querry):
-    # with sqlite3.connect('db1') as conn:
-    #     cursor = conn.execute(querry)
-    #     result = cursor.fetchall()
-    conn = sqlite3.connect('db1')
-    cursor = conn.execute(querry)
-    result = cursor.fetchall()
-    conn.close()
-    return result
+    with sqlite3.connect('db1.db') as conn:
+        cursor = conn.execute(querry)
+        result = cursor.fetchall()
+        return result
 
 
 @app.get('/currency/<currency_UPS>')
@@ -26,11 +20,11 @@ def currency_list(currency_UPS):
 
 @app.get('/currency/<currency_UPS>/rating')
 def currency_rating(currency_UPS):
-    result = get_data(f"SELECT avg(rating) FROM Rating WHERE currency_name = '{currency_UPS}'")
+    result = get_data(f"SELECT round(avg(rating), 1) FROM Rating WHERE currency_name = '{currency_UPS}'")
     return result
 
 
-@app.get('/currencies')
+@app.get('/currencies/rating')
 def currencies_rating():
     result = get_data(f"SELECT currency_name, round(avg(rating), 1) as rating FROM Rating GROUP by currency_name")
     return result
@@ -39,7 +33,7 @@ def currencies_rating():
 @app.get('/currency/trade_graph/<currency_UPS1>/<currency_UPS2>')
 def course_history(currency_UPS1, currency_UPS2):
     result = get_data("SELECT * FROM Currency WHERE currency_name = 'uah' or currency_name = 'usd'")
-
+    return result
 
 @app.get('/currency/trade/<currency_UPS1>/<currency_UPS2>')
 def course_ups1_to_ups2(currency_UPS1, currency_UPS2):
@@ -53,7 +47,7 @@ def exchange(currency_UPS1, currency_UPS2):
     pass
 
 
-@app.get('/currencies')
+@app.get('/currencies/available')
 def amount_of_currency_available():
     result = get_data("SELECT currency_name, available_quantity FROM Currency WHERE date = '11-08-2022'")
     return result
