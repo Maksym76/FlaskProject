@@ -1,0 +1,7 @@
+POST http://127.0.0.1:5000/currency/usd/rating
+Content-Type: application/json
+
+{
+  "rating": 26,
+  "comment": "content"
+}
