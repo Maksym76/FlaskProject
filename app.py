@@ -156,17 +156,17 @@ def exchange(currency_UPS1, currency_UPS2):
     exists_amount_currency2 = act_currency2.available_quantity
 
     if (user_balance1.balance >= amount1) and (exists_amount_currency2 > need_cur2):
-        a = models.Currency.query.filter_by(date=act_currency1.date, currency_name=currency_UPS1).first()
-        a.available_quantity = act_currency1.available_quantity + amount1
+        upgrade_amount_exchanger1 = models.Currency.query.filter_by(date=act_currency1.date, currency_name=currency_UPS1).first()
+        upgrade_amount_exchanger1.available_quantity = act_currency1.available_quantity + amount1
 
-        b = models.Currency.query.filter_by(date=act_currency2.date, currency_name=currency_UPS2).first()
-        b.available_quantity = exists_amount_currency2 - need_cur2
+        upgrade_amount_exchanger2 = models.Currency.query.filter_by(date=act_currency2.date, currency_name=currency_UPS2).first()
+        upgrade_amount_exchanger2.available_quantity = exists_amount_currency2 - need_cur2
 
-        c = models.Account.query.filter_by(user_id=user_id, currency_name=currency_UPS1).first()
-        c.balance = user_balance1.balance - amount1
+        upgrade_user_balance1 = models.Account.query.filter_by(user_id=user_id, currency_name=currency_UPS1).first()
+        upgrade_user_balance1.balance = user_balance1.balance - amount1
 
-        d = models.Account.query.filter_by(user_id=user_id, currency_name=currency_UPS2).first()
-        d.balance = user_balance2.balance + need_cur2
+        upgrade_user_balance2 = models.Account.query.filter_by(user_id=user_id, currency_name=currency_UPS2).first()
+        upgrade_user_balance2.balance = user_balance2.balance + need_cur2
 
 
 
