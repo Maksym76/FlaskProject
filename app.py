@@ -201,7 +201,7 @@ def user_balance():
     # return {'data': result}
 
     result = models.Account.query.filter_by(user_id=2)
-    return [itm.to_dict2() for itm in result]
+    return [itm.to_dict() for itm in result]
 
 
 @app.post('/user/transfer')
@@ -221,4 +221,4 @@ def user_history():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
