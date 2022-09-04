@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request
 
 import sqlite3
@@ -6,11 +8,12 @@ from datetime import datetime
 
 import models
 
+from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db1.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION')
 models.db.init_app(app)
-
+migrate = Migrate(app, models.db)
 
 def dict_factory(cursor, row):
     d = {}
@@ -217,7 +220,7 @@ def user_history():
     # return {'data': result}
 
     result = models.Transaction_history.query.filter_by(user_id=1)
-    return result
+    return [itm.to_dict() for itm in result]
 
 
 if __name__ == '__main__':

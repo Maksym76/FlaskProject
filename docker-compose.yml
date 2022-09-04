@@ -4,8 +4,13 @@ services:
     build: .
     ports:
       - "5000:5000"
+    environment:
+      DB_CONNECTION: 'postgresql://postgres:example@postgres:5432/postgres'
+
   db:
     image: "postgres"
+    hostname: "postgres"
+    container_name: "postgres"
     environment:
       POSTGRES_PASSWORD: example
     ports:
