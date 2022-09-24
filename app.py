@@ -1,19 +1,13 @@
 import uuid
-
 import models
-
 import sqlite3
-
 import database
-
 import sqlalchemy
-
 from celery_worker import task1
-
-from flask import Flask, request
+from flask import Flask, request, session
 
 app = Flask(__name__)
-
+app.secret_key = "Very_secret_information"
 
 def dict_factory(cursor, row):
     d = {}
@@ -105,11 +99,31 @@ def course_ups1_to_ups2(currency_UPS1, currency_UPS2):
     result = round(ups1.cost_to_one_usd / ups2.cost_to_one_usd)
     return {'value': result}
 
+@app.get('/currency/exchange/<currency_UPS1>/<currency_UPS2>')
+def init_transaction(currency_UPS1, currency_UPS2):
+    if session.get('user_id') is not None:
+        return '''
+            <html>
+            <form method="post">
+  <div class="container">
+    <label for="uname"><b>amount_currency</b></label>
+    <input type="text" placeholder="Enter value" name="amount_currency" required>
+    <button type="submit">Submit</button>
+  </div>
+</form>
+            </html>
+            '''
 
-@app.post('/currency/trade/<currency_UPS1>/<currency_UPS2>')
+    else:
+        return "Login first"
+
+@app.post('/currency/exchange/<currency_UPS1>/<currency_UPS2>')
 def exchange(currency_UPS1, currency_UPS2):
-    user_id = 1
-    amount1 = request.get_json()['amount']
+    user_id = session.get('user_id')
+    amount1 = float(request.form.get('amount_currency'))
+
+    # user_id = 1
+    # amount1 = request.get_json()['amount']
 
     # user_balance1 = get_data(f"SELECT * FROM Account WHERE user_id = '{user_id}' AND currency_name = '{currency_UPS1}'")
     # user_balance2 = get_data(f"SELECT * FROM Account WHERE user_id = '{user_id}' AND currency_name = '{currency_UPS2}'")
@@ -170,14 +184,47 @@ def amount_of_currency_available():
     return [itm.to_dict() for itm in result]
 
 
-@app.get('/user')
+@app.route('/user', methods=['GET', 'POST'])
 def user_balance():
     # result = get_data(f"SELECT balance, currency_name FROM Account WHERE user_id = 2")
     # return {'data': result}
 
     database.init_db()
-    result = models.Account.query.filter_by(user_id=2)
-    return [itm.to_dict() for itm in result]
+    if request.method == 'GET':
+        user_id = session.get('user_id')
+        if user_id is None:
+            return '''
+            <html>
+            <form method="post">
+  <div class="container">
+    <label for="uname"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="uname" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <button type="submit">Login</button>
+  </div>
+</form>
+            </html>
+            '''
+
+        else:
+            result = models.Account.query.filter_by(user_id=user_id).all()
+            return [itm.to_dict() for itm in result]
+
+    if request.method == 'POST':
+        user_login = request.form.get('uname')
+        user_check = models.User.query.filter_by(login=user_login).first()
+
+        if user_check:
+            session['user_id'] = user_check.id
+
+            return "Authorization successful!"
+
+        else:
+
+            return "Authorization not successful!"
 
 
 @app.post('/user/transfer')
@@ -193,8 +240,13 @@ def user_history():
     # return {'data': result}
 
     database.init_db()
-    result = models.Transaction_history.query.filter_by(user_id=1)
-    return [itm.to_dict() for itm in result]
+    user_id = session.get('user_id')
+    if user_id is not None:
+        result = models.Transaction_history.query.filter_by(user_id=user_id)
+        return [itm.to_dict() for itm in result]
+
+    else:
+        return 'You need log in'
 
 
 @app.teardown_appcontext

@@ -6,7 +6,7 @@ class Account(Base):
     __tablename__ = 'account'
 
     id = Column(Text, primary_key=True, nullable=False)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(Text, nullable=False)
     balance = Column(Float, nullable=False)
     currency_name = Column(String(35), nullable=False)
 
@@ -100,7 +100,7 @@ class Transaction_history(Base):
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Text, primary_key=True, nullable=False)
     login = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
 
